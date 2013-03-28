@@ -1,0 +1,38 @@
+This MATLAB function is used to evaluate a function but with a given time
+constraint.  Therefore the example
+
+   >> [a, b] = timeout(f, 3, X, Y, Z)
+
+is equivalent to evaluating
+
+   >> [a, b] = f(X, Y, Z)
+
+except that the first call will throw an error if the evaluation does not
+complete before (approximately) 3 seconds.  Note that this function
+relies on the Parallel Computing Toolbox, specifically the functions
+BATCH and WAIT.  This incurs substatial overhead, so do not use it for
+function calls that are expected to take less than 5 seconds or so.
+
+If the evaluation contains an error, the traceback will probably contain
+references to these functions and probably others.
+
+Note that this syntax is very similar to the FEVAL function except with
+an extra argument to specify the timeout constraint.  In other words,  the
+following three commands are very similar except that the last one will
+exit if it takes more than 3 seconds.
+
+   >> [a, b] = f(X, Y, Z)
+   >> [a, b] = feval(f, X, Y, Z)
+   >> [a, b] = timeout(f, 3, X, Y, Z)
+
+EXAMPLE:
+The following example creates a function that creates a random
+1000x1000 matrix and calculates the sine of it.  Depending on your
+computer, some of the examples will successfully evaluate and others will
+not complete in the allotted time.
+
+   >> f = @() sin(rand(1000));   % creates the function
+   >> a = timeout(f, 20);        % allows 20 seconds, should complete
+   >> a = timeout(f, 1);         % cannot complete in 1 second
+   Error using timeout (line 75)
+   Evaluation timed out. 
